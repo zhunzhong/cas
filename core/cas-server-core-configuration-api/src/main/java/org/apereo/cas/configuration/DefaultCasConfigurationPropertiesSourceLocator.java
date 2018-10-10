@@ -41,12 +41,21 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
 
 
+    /**
+     * Generates possible application names in priority order least to most.
+     * @return List of possible application names for property file search.
+     */
     private List<String> getApplicationNames() {
         val appNames = new ArrayList<String>();
-        val appName = casConfigurationPropertiesEnvironmentManager.getApplicationName();
         appNames.add("application");
+
+        val appName = casConfigurationPropertiesEnvironmentManager.getApplicationName();
+
+        // Spotbugs complains about a redundant call if this variable isn't created.
         val appNameLower = appName.toLowerCase();
         appNames.add(appNameLower);
+
+        // The app properties may be on a case sensitive filesystem. Add it to the list if not already lower case.
         if (!appName.equals(appNameLower)) {
             appNames.add(appName);
         }
